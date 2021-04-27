@@ -4,6 +4,13 @@ CMakeFiles
 CMakeScripts
 Testing
 Makefile
+CMakeLists.txt
+main.o
+Makefile.win
+Pilas.o
+Pilas_Colas.layout
+Pilas_Colas.o
+Pilas_Colas.exe
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
