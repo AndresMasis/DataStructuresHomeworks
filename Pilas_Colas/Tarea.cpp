@@ -1,13 +1,9 @@
-//
-// Created by Andrés on 22/4/2021.
-//
-
 #include "estructuras.h"
 
 //Pide datos al usuario
 void AlgoritmoTarea::pedirDatosUsuario() {
     cout<<"Dame una entrada de operacion (Entrada infija)"<<endl;
-    getline(cin, entradaTeclado);
+    getline(cin, entradaInfija);
 }
 
 
@@ -49,12 +45,24 @@ bool AlgoritmoTarea::encontrarCaracter(char dato) {
 
 // Ve si la entrada del usuario es valido o ingresocaracteres invalidos
 bool AlgoritmoTarea::validarEntradaTeclado() {
-    for(int i = 0; i<entradaTeclado.length(); i++)
+    short cantidadIzquierdos = 0;
+    short cantidadDerechos = 0;
+    for (int i = 0; i < entradaInfija.length(); i++) {
         // Recorre de caracter por caracter el string
-        if (!encontrarCaracter(entradaTeclado[i])) {
-            cout<<"Oops! El caracter "<<entradaTeclado[i]<<" no es valido"<<endl;
+        if (!encontrarCaracter(entradaInfija[i])) {
+            cout << "Oops! El caracter " << entradaInfija[i] << " no es valido" << endl;
             return false;
-        }
+        } else if (entradaInfija[i] == '(')
+            cantidadIzquierdos += 1;
+
+        else if (entradaInfija[i] == ')')
+            cantidadDerechos += 1;
+    }
+
+    if(cantidadDerechos != cantidadIzquierdos){
+        cout<<"Oops! La cantidad de parentesis derechos e izquierdos no coincide"<<endl;
+        return false;
+    }
 
     return true;
 }
@@ -80,103 +88,93 @@ short AlgoritmoTarea::prioridadOperador(char dato) {
 
 
 bool AlgoritmoTarea::compararPrioridades(char operadorActual, char ultimoOperadorPila){
-    if(prioridadOperador(operadorActual) > prioridadOperador(ultimoOperadorPila))
+    if(prioridadOperador(operadorActual) <= prioridadOperador(ultimoOperadorPila))
         return true;
     else
         return false;
 }
 
-char AlgoritmoTarea::encontrarUltimoOperadorPila(Pila * pila) {
-    if(pila->empty())
-        return ' ';
-    else {
-        Nodo *temporal = pila->tope;
-        while (temporal->siguiente != NULL) {
-            if (esOperador(temporal->dato[0])) {
-                return temporal->dato[0];
-            }
-            temporal = temporal->siguiente;
-        }
 
-        return ' ';
-    }
-
-}
 
 string AlgoritmoTarea::armarNumero(){
     string numeroCreado = "";
 
     // Revisa los caracteres siguientes
-    while(!entradaTeclado.empty()){
-        if(!esNumero(entradaTeclado[0]))
+    while(!entradaInfija.empty()){
+        if(!esNumero(entradaInfija[0]))
             break;
 
-        numeroCreado += entradaTeclado[0];
+        numeroCreado += entradaInfija[0];
         // Evita que se encicle
-        entradaTeclado.erase(0, 1); // Va disminuyendo el string de entrada
+        entradaInfija.erase(0, 1); // Va disminuyendo el string de entrada
     }
 
     return numeroCreado;
 }
 
 void AlgoritmoTarea::infijasPosfijas() {
-    Pila * pilaTemporal = new Pila();
+    Pila * pila = new Pila();
     char primerCaracter;
 
-    while(!entradaTeclado.empty()){
-        primerCaracter = entradaTeclado.at(0); // Pone un nuevo primer caracter
+    entradaInfija.append(")");
+    pila->push("(");
+
+    while(!entradaInfija.empty()) {
+        primerCaracter = entradaInfija.at(0); // Pone un nuevo primer caracter
 
 
         //Espacio
-        if(primerCaracter == ' ')
-            ; // Es como hacer pass, los espacios se ignoran
+        if (primerCaracter == ' '); // Es como hacer pass, los espacios se ignoran
 
 
         //Parentesis izquierdo
-        else if(primerCaracter == '(')
-            pilaTemporal->push("(");
+        else if (primerCaracter == '(')
+            pila->push("(");
 
 
         //Parentesis derecho
-        else if (primerCaracter == ')'){
+        else if (primerCaracter == ')') {
             //Recorre toda la pila hasta encontrar un parentesis izquierdo
-            while(pilaTemporal->tope->dato != "("){
+            while (pila->tope->dato != "(") {
                 // Despliegua un caracter de la lista
-                pilaPrimerAlgoritmo->push(pilaTemporal->pop()->dato);
+                posfija->push(pila->pop()->dato);
             }
+
+            pila->pop();
         }
 
 
         // Operador
-        else if(esOperador(primerCaracter)){
-            if(pilaTemporal->empty() || compararPrioridades(primerCaracter, encontrarUltimoOperadorPila(pilaTemporal))){
-                pilaTemporal->push(string(1,primerCaracter));
-            } else {
-                // Despliegua un caracter de la lista
-                pilaPrimerAlgoritmo->push(pilaTemporal->pop()->dato);
-                continue;
+        else if(esOperador(primerCaracter)) {
+            while(compararPrioridades(primerCaracter, pila->tope->dato[0])){
+                if (pila->tope->dato == "(")
+                    break;
+                posfija->push(pila->pop()->dato);
             }
+
+            pila->push(string(1,primerCaracter));
 
 
         // Operando
         } else {
             // Es un numero
             // Despliegua un caracter de la lista
-            pilaPrimerAlgoritmo->push(armarNumero());
+            posfija->push(armarNumero());
             continue;
         }
 
 
         // Evita que se encicle
-        entradaTeclado.erase(0, 1); // Va disminuyendo el string de entrada
+        entradaInfija.erase(0, 1); // Va disminuyendo el string de entrada
     }
 
 
     // Despliega todos los datos que hayan quedado en la pila
-    while(!pilaTemporal->empty())
-        pilaPrimerAlgoritmo->push(pilaTemporal->pop()->dato);
+    while(!pila->empty())
+        posfija->push(pila->pop()->dato);
 
 
+    posfija->voltear();
 }
 
 
@@ -185,6 +183,6 @@ void AlgoritmoTarea::final(){
     if(validarEntradaTeclado()){
         infijasPosfijas();
 
-        pilaPrimerAlgoritmo->imprimir();
+        posfija->imprimir();
     }
 }

@@ -31,6 +31,7 @@ struct Pila {
        void push (string dato);
        Nodo* pop ();
        Nodo* peek();
+       void voltear();
        bool empty();
        void imprimir();
 };
@@ -38,13 +39,13 @@ struct Pila {
 
 struct AlgoritmoTarea{
     //campos
-    string entradaTeclado;
-    Pila * pilaPrimerAlgoritmo;
+    string entradaInfija;
+    Pila * posfija;
 
     //Constructor
     AlgoritmoTarea(){
-        entradaTeclado  = "";
-        pilaPrimerAlgoritmo = new Pila();
+        entradaInfija  = "";
+        posfija = new Pila();
     }
 
     //funciones
@@ -55,7 +56,6 @@ struct AlgoritmoTarea{
     bool validarEntradaTeclado();
     short prioridadOperador(char dato);
     bool compararPrioridades(char operadorActual, char ultimoOperadorPila);
-    char encontrarUltimoOperadorPila(Pila * pila);
     string armarNumero();
     void infijasPosfijas();
     double calcularResultado(Pila * posfija);

@@ -57,3 +57,11 @@ void Pila::imprimir(){
     }
 }
 
+void Pila::voltear() {
+    Pila * auxiliar = new Pila();
+    while(!empty())
+        auxiliar->push(pop()->dato);
+
+    tope = auxiliar->tope;
+}
+
