@@ -46,14 +46,14 @@ void Pila::imprimir(){
     if(empty())
         cout<<endl<<"Pila vacia"<<endl<<endl<<endl;
     else {
-        cout <<endl<< "tope = ";
+        cout <<endl<< "--------tope--------"<<endl;
         Nodo *tmp = tope;
 
         while (tmp != NULL) {
-            cout << tmp->dato << " -> ";
+            cout << tmp->dato << endl;
             tmp = tmp->siguiente;
         }
-        cout << "--fondo--" << endl << endl<<endl;
+        cout << "--------fin--------" << endl << endl<<endl;
     }
 }
 

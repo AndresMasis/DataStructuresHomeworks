@@ -53,12 +53,14 @@ struct AlgoritmoTarea{
     bool esNumero(char dato);
     bool esOperador(char dato);
     bool encontrarCaracter(char dato);
+    bool encontrarSiguiente(string parte);
     bool validarEntradaTeclado();
     short prioridadOperador(char dato);
     bool compararPrioridades(char operadorActual, char ultimoOperadorPila);
     string armarNumero();
     void infijasPosfijas();
-    double calcularResultado(Pila * posfija);
+    string calcularUltimo(string numero1, string numero2, char operador);
+    double calcularResultado();
     void final();
 };
 
